@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Creates a SAML Identity Provider.
+Parameters:
+  idpName:
+    Description: Name of the identity provider to create.
+    Type: String
+  samlMetadata:
+    Description: The contents of an XML IdP MetaData Document.
+    Type: String
+Resources:
+  samlIdentityProvider:
+    Type: AWS::IAM::SAMLProvider
+    Properties: 
+      Name: !Ref idpName
+      SamlMetadataDocument: !Ref samlMetadata
+  adminRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: 
+              Federated: !Sub "arn:aws:iam::${AWS::AccountId}:saml-provider/${idpName}"
+            Action:
+              - "sts:AssumeRoleWithSAML"
+            Condition:
+              StringEquals:
+                "SAML:aud": "https://signin.aws.amazon.com/saml"
+      Description: "NMD Admin Role for service."
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+      RoleName: "NMD-Admin"
+    DependsOn: samlIdentityProvider
