@@ -4,6 +4,7 @@ Parameters:
   idpName:
     Description: Name of the identity provider to create.
     Type: String
+    Default: "GSuite"
   samlMetadata:
     Description: The contents of an XML IdP MetaData Document.
     Type: String
@@ -28,7 +29,34 @@ Resources:
               StringEquals:
                 "SAML:aud": "https://signin.aws.amazon.com/saml"
       Description: "NMD Admin Role for service."
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AdministratorAccess
+      # ManagedPolicyArns:
+      #   - arn:aws:iam::aws:policy/AdministratorAccess
       RoleName: "NMD-Admin"
     DependsOn: samlIdentityProvider
+  FreesideDeploymentPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: FreesideDeploymentPolicy
+      PolicyDocument:
+        - Statement:
+          - Effect: Allow
+            Action: [
+              'iam:*',
+            ]
+            Resource: 
+              - !Sub "arn:aws:iam::${AWS::AccountId}:role/freeside/*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:policy/freeside/*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:instance-profile/freeside/*"
+        - Statement:
+          - Effect: Allow
+            Action: [
+              'amplify:*',
+              'athena:*',
+              'ec2:*',
+              'elasticmapreduce:*',
+              'glue:*',
+              's3:*',
+            ]
+            Resource: "*"
+      Roles: 
+        - Ref: "adminRole"
