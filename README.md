@@ -2,12 +2,10 @@
 
 ## Customer Account
 
-1. Download SAML XML Data from
-   https://admin.google.com/ac/apps/saml/804580507359
-1. Generate an external Id for the customer (Random number or Use a customer UUID from the Freeside console?)
 1. Launch Cloud Formation Stack in client account
    https://github.com/New-Math-Data/cloudformation-setup-saml-gsuite
-1. Give the stack the name `nmd-freeside-saml`
+1. Give the stack the name `nmd-developer-access-saml`
+1. Open the file in this repo called GoogleIDPMetadata.xml and copy the entire contents to the input field called `samlMetadata`
 1. Click Next
 1. Check the box for `I acknowledge that AWS CloudFormation might create IAM resources with custom names.`
 1. Click Create Stack
