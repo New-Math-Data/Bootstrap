@@ -7,6 +7,17 @@ Parameters:
   samlMetadata:
     Description: The contents of an XML IdP MetaData Document.
     Type: String
+  accessPolicy:
+    Description: "Policy to assign to New Math Data Engineers in your account. Policy descriptions are here: https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_job-functions.html"
+    Type: String
+    Default: AdministratorAccess
+    AllowedValues:
+      - AdministratorAccess
+      - PowerUserAccess
+      - SecurityAudit
+      - ReadOnlyAccess
+      - SystemAdministrator
+      - Billing
 Resources:
   samlIdentityProvider:
     Type: AWS::IAM::SAMLProvider
@@ -36,3 +47,5 @@ Resources:
 Outputs:
   NewMathDataSsoRole:
     Value: !GetAtt adminRole.Arn
+  NewMathDataIdentityProvider:
+    Value: !GetAtt samlIdentityProvider.Arn
