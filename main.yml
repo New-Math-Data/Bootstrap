@@ -4,7 +4,7 @@ Parameters:
   idpName:
     Description: Name of the identity provider to create.
     Type: String
-    default: NMDGoogle
+    Default: NMDGoogle
   samlMetadata:
     Description: The contents of an XML IdP MetaData Document.
     Type: String
