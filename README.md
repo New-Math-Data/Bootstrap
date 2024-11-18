@@ -17,30 +17,46 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_extern
 ## Setup SSO
 
 The SAML roles installed also work with AWS CLI credentials.
-
-### Install aws-google-auth
-
-https://github.com/cevoaustralia/aws-google-auth
-`pip install aws-google-auth`
-
-Open your ~/.aws/config file and add the following block, replacing values in <>
-with the correct values. For GOOGLEIDP and GOOGLESDP, you can ask in the `#freeside` channel in slack.
-
-Customer account number can be retrieved from customer or from your login page using the GSuite
-SSO/SAML App.
-
-Username is your newmathdata.com email address.
-
-```
-[profile <PROFILE_NAME>]
-region = us-east-1
-google_config.ask_role = False
-google_config.duration = 3600
-google_config.google_idp_id = <GOOGLEIDP>
-google_config.role_arn = arn:aws:iam::<CUSTOMER_ACCOUNT_NUMBER>:role/NMD-Admin
-google_config.google_sp_id = <GOOGLESPID>
-google_config.u2f_disabled = False
-google_config.google_username = <USERNAME>
-google_config.keyring = False
-google_config.bg_response = None
+We use saml2aws:
+```bash
+brew install saml2aws
+saml2aws configure 
+   Configuration saved for IDP account: default
+   saml2aws configure
+   ? Please choose a provider: GoogleApps
+   ? AWS Profile saml
+   ? URL https://accounts.google.com/o/saml2/initsso?idpid=C03vzt6hn&spid=804580507359&forceauthn=false
+   ? Username cking@newmathdata.com
+   ? Password ***************
+   ? Confirm ***************
+   
+   account {
+     URL: https://accounts.google.com/o/saml2/initsso?idpid=C03vzt6hn&spid=804580507359&forceauthn=false
+     Username: cking@newmathdata.com
+     Provider: GoogleApps
+     MFA: Auto
+     SkipVerify: true
+     AmazonWebservicesURN: urn:amazon:webservices
+     SessionDuration: 3600
+     Profile: saml
+     RoleARN:
+     Region:
+   }
+saml2aws login
+   Using IdP Account default to access GoogleApps https://accounts.google.com/o/saml2/initsso?idpid=C03vzt6hn&spid=804580507359&forceauthn=false
+   To use saved password just hit enter.
+   ? Username cking@newmathdata.com
+   ? Password
+   
+   Authenticating as cking@newmathdata.com ...
+   Check your phone and tap 'Yes' on the prompt. Then press ENTER to continue.
+   
+   ? Please choose the role Account: 12345678901 / NMD-Admin
+   Selected role: arn:aws:iam::12345678901:role/NMD-Admin
+   Requesting AWS credentials using SAML assertion.
+   Logged in as: arn:aws:sts::12345678901:assumed-role/NMD-Admin/cking@newmathdata.com
+   
+   Your new access key pair has been stored in the AWS configuration.
+   Note that it will expire at 2024-11-18 11:43:24 -0800 PST
+   To use this credential, call the AWS CLI with the --profile option (e.g. aws --profile saml ec2 describe-instances).
 ```
