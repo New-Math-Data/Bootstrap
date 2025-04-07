@@ -8,6 +8,10 @@ Parameters:
   samlMetadata:
     Description: The contents of an XML IdP MetaData Document.
     Type: String
+  custNameAbbreviation:
+    Description: Label for customer name. 2-32 characters, numbers, underscores or dashes. Does not affect functionality.
+    Type: String
+    AllowedPattern: '^[a-zA-Z0-9_-]{2,32}$' 
   accessPolicy:
     Description: "Policy to assign to New Math Data Engineers in your account. Policy descriptions are here: https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_job-functions.html"
     Type: String
@@ -43,7 +47,7 @@ Resources:
       Description: "NMD Admin Role for service."
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AdministratorAccess
-      RoleName: "NMD-Admin"
+      RoleName: !Sub "NMD-Admin-${custNameAbbreviation}"
     DependsOn: samlIdentityProvider
 
 Outputs:
