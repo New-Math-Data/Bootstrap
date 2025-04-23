@@ -4,13 +4,26 @@
 
 [Installing CF Template](https://github.com/New-Math-Data/cloudformation-setup-saml-gsuite/blob/main/CF_TEMPLATE_INSTALL.md)
 
+## CLI Deploy
+From Customer account
+```bash
+aws cloudformation deploy \
+  --template-file main.yaml \
+  --stack-name nmd-saml-idp \
+  --parameter-overrides \
+    idpName="NMDGoogle" \
+    samlMetadata="YOUR_SAML_METADATA_XML_AS_STRING" \
+    custNameAbbreviation="customer_name" \
+    accessPolicy="AdministratorAccess" \
+  --capabilities CAPABILITY_NAMED_IAM \
+  --region us-west-2
+```
 ## NMD GSuite
 
 1. Navigate to a user profile
    https://admin.google.com/ac/users/
 1. Add the following to the Amazon section
    arn:aws:iam::{AWS_ACCOUNT_NUMBER}:role/NMD-Freeside-Admin,arn:aws:iam::{AWS_ACCOUNT_NUMBER}:saml-provider/GSuite
-1.
 
 https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html
 
