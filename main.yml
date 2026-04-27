@@ -23,13 +23,27 @@ Parameters:
       - ReadOnlyAccess
       - SystemAdministrator
       - Billing
+Mappings:
+  PolicyMap:
+    AdministratorAccess:
+      Arn: "arn:aws:iam::aws:policy/AdministratorAccess"
+    PowerUserAccess:
+      Arn: "arn:aws:iam::aws:policy/PowerUserAccess"
+    SecurityAudit:
+      Arn: "arn:aws:iam::aws:policy/SecurityAudit"
+    ReadOnlyAccess:
+      Arn: "arn:aws:iam::aws:policy/ReadOnlyAccess"
+    SystemAdministrator:
+      Arn: "arn:aws:iam::aws:policy/job-function/SystemAdministrator"
+    Billing:
+      Arn: "arn:aws:iam::aws:policy/job-function/Billing"
 Resources:
   samlIdentityProvider:
     Type: AWS::IAM::SAMLProvider
     Properties: 
       Name: !Ref idpName
       SamlMetadataDocument: !Ref samlMetadata
-  adminRole:
+  samlChosenRole:
     Type: AWS::IAM::Role
     Properties: 
       MaxSessionDuration: 43200
@@ -44,14 +58,14 @@ Resources:
             Condition:
               StringEquals:
                 "SAML:aud": "https://signin.aws.amazon.com/saml"
-      Description: "NMD Admin Role for service."
+      Description: !Sub "NMD ${accessPolicy} Role for service."
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AdministratorAccess
-      RoleName: !Sub "NMD-Admin-${custNameAbbreviation}"
+        - !FindInMap [PolicyMap, !Ref accessPolicy, Arn]
+      RoleName: !Sub "NMD-${accessPolicy}-${custNameAbbreviation}"
     DependsOn: samlIdentityProvider
 
 Outputs:
   NewMathDataSsoRole:
-    Value: !GetAtt adminRole.Arn
+    Value: !GetAtt samlChosenRole.Arn
   NewMathDataIdentityProvider:
     Value: !GetAtt samlIdentityProvider.Arn
