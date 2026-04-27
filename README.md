@@ -6,10 +6,17 @@
 
 ## CLI Deploy
 From Customer account
+
+**Note:** To perform a "Dry Run" (Change Set), include the `--no-execute-changeset` flag as shown below. Remove it when you are ready to create the resources.
+
+if you have the xml locally : 
+`samlMetadata="$(cat GoogleIDPMetadata-newcert.xml)"`
+
 ```bash
 aws cloudformation deploy \
-  --template-file main.yaml \
+  --template-file main.yml \
   --stack-name nmd-saml-idp \
+  --no-execute-changeset \
   --parameter-overrides \
     idpName="NMDGoogle" \
     samlMetadata="YOUR_SAML_METADATA_XML_AS_STRING" \
@@ -18,12 +25,24 @@ aws cloudformation deploy \
   --capabilities CAPABILITY_NAMED_IAM \
   --region us-west-2
 ```
+
+### Access Policies
+The `accessPolicy` parameter allows you to select from several [AWS Managed Policies for Job Functions](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_job-functions.html). This ensures that NMD engineers have the appropriate level of access for their specific task.
+
+| Option | AWS Managed Policy ARN | Description |
+| :--- | :--- | :--- |
+| **AdministratorAccess** | [AdministratorAccess](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AdministratorAccess.html) | Full access to all resources. |
+| **PowerUserAccess** | [PowerUserAccess](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/PowerUserAccess.html) | Full access except for IAM and Organizations. |
+| **SecurityAudit** | [SecurityAudit](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/SecurityAudit.html) | For security auditing and compliance monitoring. |
+| **ReadOnlyAccess** | [ReadOnlyAccess](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/ReadOnlyAccess.html) | View-only access to all resources. |
+| **SystemAdministrator** | [SystemAdministrator](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/SystemAdministrator.html) | Operations and resource maintenance. |
+| **Billing** | [Billing](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/Billing.html) | Access to billing and cost management. |
 ## NMD GSuite
 
 1. Navigate to a user profile
    https://admin.google.com/ac/users/
-1. Add the following to the Amazon section
-   arn:aws:iam::{AWS_ACCOUNT_NUMBER}:role/NMD-Freeside-Admin,arn:aws:iam::{AWS_ACCOUNT_NUMBER}:saml-provider/GSuite
+1. Add the following to the Amazon section (replace placeholders with your deployment values):
+   arn:aws:iam::{AWS_ACCOUNT_NUMBER}:role/NMD-{accessPolicy}-{custNameAbbreviation},arn:aws:iam::{AWS_ACCOUNT_NUMBER}:saml-provider/{idpName}
 
 https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user_externalid.html
 
